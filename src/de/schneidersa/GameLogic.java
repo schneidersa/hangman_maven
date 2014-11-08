@@ -3,33 +3,56 @@ package de.schneidersa;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author Sandra Schneider
  */
 public class GameLogic {
 
-    List<String> words = new ArrayList<>();
-    Set<Character> inputChars = new HashSet<>();
-    boolean wordMatched = false;
-    int wrongCharCounter = 0;
+    private static final int HANGMAN_LIVES = 6;
+    private final List<String> guessWords = new ArrayList<>();
+    private final Set<Character> inputChars = new HashSet<>();
+    private final GallowPrinter gallowPrinter = new GallowPrinter();
+    private boolean wordMatched = false;
+    private int wrongCharCounter = 0;
 
-    public void addWord(String word) {
-        words.add(word.toUpperCase());
+    /**
+     * Fügt jedes neue Wort der Liste words hinzu.
+     *
+     * @param word
+     * @param words
+     */
+    public void addWord(String word, String... words) {
+        guessWords.add(word.toUpperCase());
+
+        if (words == null) {
+            return;
+        }
+
+        for (String singleWord : words) {
+            guessWords.add(singleWord.toUpperCase());
+        }
+    }
+
+    /**
+     * Generiert eine Zufallszahl zwischen 0 und der Größe des words Arrays.
+     *
+     * @return randomWord als integer
+     */
+    public final int randomizeWords() {
+        return (int) (Math.random() * guessWords.size());
     }
 
     /**
      * Konvertiert Buchstaben des incWord in _ und speichert dieses in der Variablen outWord ab
      *
-     * @param wordIndex 
-     * @return          String, in dem Buchstaben durch _ ersetzt sind
+     * @param wordIndex
+     * @return String, in dem Buchstaben durch _ ersetzt sind
      */
     public String anonymizeAndCheckWord(int wordIndex) {
-        String incWord = words.get(wordIndex);
+        String incWord = guessWords.get(wordIndex);
         StringBuilder outWord = new StringBuilder("");
         wordMatched = true;
 
@@ -43,118 +66,53 @@ public class GameLogic {
                 wordMatched = false;
             }
         }
-
         return outWord.toString();
     }
 
     /**
-     * User Input
+     *
+     * @param wordIndex is the number of the random word
      */
-    public Character inputChar(int wordIndex) {
-        String incWord = words.get(wordIndex);
-        String regex = "[a-zA-Z]";
-        Scanner in = new Scanner(System.in);
-        String readChar = in.nextLine().toUpperCase();
-//        Pattern p = Pattern.compile("[a-zA-Z]");
-//        Matcher m = p.matcher(readChar);
-//        boolean b = m.matches();
-//        System.out.println(b);
+    public void inputChar(int wordIndex) {
+        String incWord = guessWords.get(wordIndex);
+        String regex = "[a-zA-ZöäüÖÄÜß]";
+        String userInput = Utils.readUserInput();
 
-        if (readChar.length() > 1) {
+        if (userInput.length() > 1) {
             System.out.println("Fehler! Bitte geben Sie nur einen Buchstaben ein");
-            return '#';
-        } else if (readChar.length() == 0) {
+            return;
+        } else if (userInput.length() == 0) {
             System.out.println("Fehler! Bitte geben Sie einen Buchstaben ein");
-            return '#';
-        } else if (!Pattern.matches(regex, readChar)) {
+            return;
+        } else if (!Pattern.matches(regex, userInput)) {
             System.out.println("Bitte geben sie einen gültigen Wertebereich (A-Z) ein");
-            return '#';
+            return;
+        } else if (inputChars.contains(userInput.charAt(0))) {
+            System.out.println("Diesen Buchstaben hatten wir doch schonmal");
+            return;
         }
-//            else if (b == false) {
-//            System.out.println("Bitte geben sie einen gültigen Wertebereich (A-Z) ein");
-//            return '#';
-//        }
 
-        if (incWord.indexOf(readChar.charAt(0)) == -1) {
+        if (incWord.indexOf(userInput.charAt(0)) == -1) {
             wrongCharCounter++;
-            System.out.println("Der Buchstabe ist im Wort nicht enthalten");
+            System.out.println("Schade! Der Buchstabe ist im Wort nicht enthalten");
         }
 
-        printHangman();
-        inputChars.add(readChar.charAt(0));
-
-        return readChar.charAt(0);
+        // call the print function
+        gallowPrinter.printGallow(wrongCharCounter);
+        inputChars.add(userInput.charAt(0));
     }
 
-    public boolean matchedWord() {
+    public boolean nextRound() {
+        return wrongCharCounter < HANGMAN_LIVES && !wordMatched;
+    }
+
+    public boolean winGame() {
         return wordMatched;
     }
 
-    public void printHangman() {
-        switch (wrongCharCounter) {
-            case 0:
-                System.out.println(" __________");
-                System.out.println(" |/     ");
-                System.out.println(" |      ");
-                System.out.println(" |      ");
-                System.out.println(" |      ");
-                System.out.println(" |      ");
-                System.out.println("_|___");
-                break;
-            case 1:
-                System.out.println(" __________");
-                System.out.println(" |/      |");
-                System.out.println(" |      (_)");
-                System.out.println(" |     ");
-                System.out.println(" |       ");
-                System.out.println(" |      ");
-                System.out.println("_|___");
-                break;
-            case 2:
-                System.out.println(" __________");
-                System.out.println(" |/      |");
-                System.out.println(" |      (_)");
-                System.out.println(" |       |");
-                System.out.println(" |       |");
-                System.out.println(" |      ");
-                System.out.println("_|___");
-                break;
-            case 3:
-                System.out.println(" __________");
-                System.out.println(" |/      |");
-                System.out.println(" |      (_)");
-                System.out.println(" |       |");
-                System.out.println(" |       |");
-                System.out.println(" |        \\");
-                System.out.println("_|___");
-                break;
-            case 4:
-                System.out.println(" __________");
-                System.out.println(" |/      |");
-                System.out.println(" |      (_)");
-                System.out.println(" |       |");
-                System.out.println(" |       |");
-                System.out.println(" |      / \\");
-                System.out.println("_|___");
-                break;
-            case 5:
-                System.out.println(" __________");
-                System.out.println(" |/      |");
-                System.out.println(" |      (_)");
-                System.out.println(" |       |/");
-                System.out.println(" |       |");
-                System.out.println(" |      / \\");
-                System.out.println("_|___");
-                break;
-            case 6:
-                System.out.println(" __________");
-                System.out.println(" |/      |");
-                System.out.println(" |      (_)");
-                System.out.println(" |      \\|/");
-                System.out.println(" |       |");
-                System.out.println(" |      / \\");
-                System.out.println("_|___");
-                break;
-        }
+    public void resetGame() {
+        inputChars.clear();
+        wordMatched = false;
+        wrongCharCounter = 0;
     }
 }
