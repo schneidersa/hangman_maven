@@ -1,6 +1,11 @@
 package de.schneidersa;
 
 /**
+ * Kleines Java-Spiel, bei dem ein anonymisiertes Wort erraten werden soll.
+ * Der Spieler hat dabei eine begrenzte Anzahl an Leben, die durch einen 
+ * Hangman symbolisiert werden. Sobald das Männchen komplett am Galgen hängt,
+ * ist das Spiel verloren.
+ * 
  * @author Sandra Schneider
  */
 public class Hangman {
@@ -17,29 +22,20 @@ public class Hangman {
         startGame(gameLogic);
     }
 
-    /**
-     *
-     * @param gameLogic
-     */
     private static void initGame(GameLogic gameLogic) {
         // Game Settings
-        gameLogic.addWord("Immatrikulationsbescheinigung", "Matrikelnummer", "Kaffee",
+        gameLogic.addWords("Immatrikulationsbescheinigung", "Matrikelnummer", "Kaffee",
                 "Verteilungsdiagramm", "Softwarearchitekt", "Sektflasche", "UML",
                 "Softwareentwicklung");
     }
 
-    /**
-     *
-     * @param gameLogic
-     */
     private static void startGame(GameLogic gameLogic) {
-        int randomWord = gameLogic.randomizeWords();
-        System.out.println(gameLogic.anonymizeAndCheckWord(randomWord));
+        gameLogic.start();
+        printMessageStart(gameLogic);
 
-        System.out.println("Bitte geben Sie Ihren ersten Buchstaben ein:");
         do {
-            gameLogic.inputChar(randomWord);
-            System.out.println(gameLogic.anonymizeAndCheckWord(randomWord));
+            gameLogic.handleUserInput();
+            printAnonymizeWord(gameLogic);
         } while (gameLogic.nextRound());
 
         if (gameLogic.winGame()) {
@@ -48,6 +44,10 @@ public class Hangman {
             printMessageLoose();
         }
 
+        askUserForNewGame(gameLogic);
+    }
+
+    private static void askUserForNewGame(GameLogic gameLogic) {
         String userInput = Utils.readUserInput();
         if (userInput.contains("J")) {
             startNewGame(gameLogic);
@@ -56,18 +56,20 @@ public class Hangman {
         }
     }
 
-    /**
-     *
-     * @param gameLogic
-     */
     private static void startNewGame(GameLogic gameLogic) {
         gameLogic.resetGame();
         startGame(gameLogic);
     }
 
-    /**
-     * Print Messages
-     */
+    private static void printAnonymizeWord(GameLogic gameLogic) {
+        System.out.println(gameLogic.anonymizeAndCheckWord());
+    }
+
+    private static void printMessageStart(GameLogic gameLogic) {
+        printAnonymizeWord(gameLogic);
+        System.out.println("Bitte geben Sie Ihren ersten Buchstaben ein:");
+    }
+
     private static void printMessageNoNextTry() {
         System.out.println("Schade, dann ein andermal!");
     }

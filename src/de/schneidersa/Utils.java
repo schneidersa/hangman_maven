@@ -3,7 +3,8 @@ package de.schneidersa;
 import java.util.Scanner;
 
 /**
- *
+ * Helfer-Klasse für User Input.
+ * 
  * @author Sandra Schneider
  */
 public class Utils {

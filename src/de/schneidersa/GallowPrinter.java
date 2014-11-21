@@ -1,7 +1,9 @@
 package de.schneidersa;
 
 /**
- *
+ * Printer-Klasse, die mit Hilfe des Interfaces IHangmanOutput den Hangman mit 
+ * der ausgewählten Implementierung HangmanOutputConsole in der Console ausgibt.
+ * 
  * @author Sandra Schneider
  */
 public class GallowPrinter {
@@ -14,10 +16,12 @@ public class GallowPrinter {
     private static final int ONE_FAIL = 1;
     private static final int NO_FAIL = 0;
 
-    /**
-     *
-     * @param wrongCharCounter
-     */
+    private final IHangmanOutput output;
+
+    public GallowPrinter(IHangmanOutput output) {
+        this.output = output;
+    }
+
     public final void printGallow(final int wrongCharCounter) {
         switch (wrongCharCounter) {
             case NO_FAIL:
@@ -47,107 +51,66 @@ public class GallowPrinter {
     }
 
     private void printGallowWithHeadBodyLegsAndArms() {
-        printGallowTop();
-        printHangmansHead();
-        printHangmansArms();
-        printHangmansBody();
-        printHangmansLegs();
-        printGallowBottom();
+        output.printGallowTop();
+        output.printHangmansHead();
+        output.printHangmansArms();
+        output.printHangmansBody();
+        output.printHangmansLegs();
+        output.printGallowBottom();
     }
 
     private void printGallowWithHeadBodyLegsAndRightArm() {
-        printGallowTop();
-        printHangmansHead();
-        printHangmansRightArm();
-        printHangmansBody();
-        printHangmansLegs();
-        printGallowBottom();
+        output.printGallowTop();
+        output.printHangmansHead();
+        output.printHangmansRightHand();
+        output.printHangmansBody();
+        output.printHangmansLegs();
+        output.printGallowBottom();
     }
 
     private void printGallowWithHeadBodyAndLegs() {
-        printGallowTop();
-        printHangmansHead();
-        printHangmansBody();
-        printHangmansBody();
-        printHangmansLegs();
-        printGallowBottom();
+        output.printGallowTop();
+        output.printHangmansHead();
+        output.printHangmansBody();
+        output.printHangmansBody();
+        output.printHangmansLegs();
+        output.printGallowBottom();
     }
 
     private void printGallowWithHeadBodyAndRightLeg() {
-        printGallowTop();
-        printHangmansHead();
-        printHangmansBody();
-        printHangmansBody();
-        printHangmansRightLeg();
-        printGallowBottom();
+        output.printGallowTop();
+        output.printHangmansHead();
+        output.printHangmansBody();
+        output.printHangmansBody();
+        output.printHangmangsRightLeg();
+        output.printGallowBottom();
     }
 
     private void printGallowWithHeadAndBody() {
-        printGallowTop();
-        printHangmansHead();
-        printHangmansBody();
-        printHangmansBody();
-        printGallowPiece();
-        printGallowBottom();
+        output.printGallowTop();
+        output.printHangmansHead();
+        output.printHangmansBody();
+        output.printHangmansBody();
+        output.printGallowPiece();
+        output.printGallowBottom();
     }
 
     private void printGallowWithHead() {
-        printGallowTop();
-        printHangmansHead();
-        printGallowPiece();
-        printGallowPiece();
-        printGallowPiece();
-        printGallowBottom();
+        output.printGallowTop();
+        output.printHangmansHead();
+        output.printGallowPiece();
+        output.printGallowPiece();
+        output.printGallowPiece();
+        output.printGallowBottom();
     }
 
     private void printGallow() {
-        printGallowTop();
-        printGallowCrossbar();
-        printGallowPiece();
-        printGallowPiece();
-        printGallowPiece();
-        printGallowPiece();
-        printGallowBottom();
-    }
-
-    private void printGallowTop() {
-        System.out.println(" __________");
-    }
-
-    private void printGallowCrossbar() {
-        System.out.println(" |/     ");
-    }
-
-    private void printGallowPiece() {
-        System.out.println(" |      ");
-    }
-
-    private void printHangmansHead() {
-        System.out.println(" |/      |");
-        System.out.println(" |      (_)");
-    }
-
-    private void printHangmansRightArm() {
-        System.out.println(" |       |/");
-    }
-
-    private void printHangmansArms() {
-        System.out.println(" |      \\|/");
-    }
-
-    private void printHangmansBody() {
-        System.out.println(" |       |");
-    }
-
-    private void printHangmansRightLeg() {
-        System.out.println(" |        \\");
-    }
-
-    private void printHangmansLegs() {
-        System.out.println(" |      / \\");
-    }
-
-    private void printGallowBottom() {
-        System.out.println("_|___");
+        output.printGallowTop();
+        output.printHangmansRightArm();
+        output.printGallowPiece();
+        output.printGallowPiece();
+        output.printGallowPiece();
+        output.printGallowPiece();
+        output.printGallowBottom();
     }
 }

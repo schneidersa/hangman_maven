@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
+ * GameLogic für Java-Spiel Hangman.
+ * 
  * @author Sandra Schneider
  */
 public class GameLogic {
@@ -14,17 +16,16 @@ public class GameLogic {
     private static final int HANGMAN_LIVES = 6;
     private final List<String> guessWords = new ArrayList<>();
     private final Set<Character> inputChars = new HashSet<>();
-    private final GallowPrinter gallowPrinter = new GallowPrinter();
+    private final GallowPrinter gallowPrinter = new GallowPrinter(new HangmanOutputConsole());
     private boolean wordMatched = false;
     private int wrongCharCounter = 0;
+    private int randomWordIndex;
 
-    /**
-     * Fügt jedes neue Wort der Liste words hinzu.
-     *
-     * @param word
-     * @param words
-     */
-    public void addWord(String word, String... words) {
+    public void start() {
+        randomWordIndex = randomizeWords();
+    }
+
+    public void addWords(String word, String... words) {
         guessWords.add(word.toUpperCase());
 
         if (words == null) {
@@ -37,22 +38,21 @@ public class GameLogic {
     }
 
     /**
-     * Generiert eine Zufallszahl zwischen 0 und der Größe des words Arrays.
+     * Generiert eine Zufallszahl zwischen 0 und der Größe des Array words.
      *
      * @return randomWord als integer
      */
-    public final int randomizeWords() {
+    private int randomizeWords() {
         return (int) (Math.random() * guessWords.size());
     }
 
     /**
      * Konvertiert Buchstaben des incWord in _ und speichert dieses in der Variablen outWord ab
      *
-     * @param wordIndex
      * @return String, in dem Buchstaben durch _ ersetzt sind
      */
-    public String anonymizeAndCheckWord(int wordIndex) {
-        String incWord = guessWords.get(wordIndex);
+    public String anonymizeAndCheckWord() {
+        String incWord = guessWords.get(randomWordIndex);
         StringBuilder outWord = new StringBuilder("");
         wordMatched = true;
 
@@ -61,7 +61,7 @@ public class GameLogic {
                 outWord.append(incWord.charAt(i));
                 outWord.append(" ");
             } else {
-                // Wenn Set inputChars leer ist, ersetze den Buchstaben mit _
+                // Wenn inputChars leer ist, ersetze den Buchstaben mit _
                 outWord.append("_ ");
                 wordMatched = false;
             }
@@ -69,12 +69,8 @@ public class GameLogic {
         return outWord.toString();
     }
 
-    /**
-     *
-     * @param wordIndex is the number of the random word
-     */
-    public void inputChar(int wordIndex) {
-        String incWord = guessWords.get(wordIndex);
+    public void handleUserInput() {
+        String incWord = guessWords.get(randomWordIndex);
         String regex = "[a-zA-ZöäüÖÄÜß]";
         String userInput = Utils.readUserInput();
 
@@ -92,14 +88,17 @@ public class GameLogic {
             return;
         }
 
+        checkWordContainsUserInput(incWord, userInput);
+
+        gallowPrinter.printGallow(wrongCharCounter);
+        inputChars.add(userInput.charAt(0));
+    }
+
+    private void checkWordContainsUserInput(String incWord, String userInput) {
         if (incWord.indexOf(userInput.charAt(0)) == -1) {
             wrongCharCounter++;
             System.out.println("Schade! Der Buchstabe ist im Wort nicht enthalten");
         }
-
-        // call the print function
-        gallowPrinter.printGallow(wrongCharCounter);
-        inputChars.add(userInput.charAt(0));
     }
 
     public boolean nextRound() {
