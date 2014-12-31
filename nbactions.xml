@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-run Hangman</actionName>
+            <displayName>run Hangman</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>package</goal>
+            </goals>
+            <activatedProfiles>
+                <activatedProfile>run-hangman</activatedProfile>
+            </activatedProfiles>
+        </action>
+    </actions>
